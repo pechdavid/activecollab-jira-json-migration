@@ -12,8 +12,7 @@ Simple migration script that enables you:
 * migrate milestones (as versions in Jira)
 
 Attachments with dirty script
-=========================
-=========================
+-----------------------------
 
 # upload serve.php to active collab public
 # enable through .htaccess
@@ -21,7 +20,7 @@ Attachments with dirty script
 # don't forget to remove file after migration
 
 Known Issues
-================================
+------------
 
 * Removed users are migrated only as their ID
 * Problem migrating multiple attachments with the same name in the issue
