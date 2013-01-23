@@ -14,10 +14,10 @@ Simple migration script that enables you:
 Attachments with dirty script
 -----------------------------
 
-# upload serve.php to active collab public
-# enable through .htaccess
-# make migration
-# don't forget to remove file after migration
+1. upload serve.php to active collab public
+1. enable through .htaccess
+1. make migration
+1. don't forget to remove file after migration
 
 Known Issues
 ------------
