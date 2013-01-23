@@ -5,6 +5,7 @@ Migrate from Active Collab (2.3.x+) to Jira via JSON format!
 
 Simple migration script that enables you: 
 
+* active collab REST API must be enabled
 * migrate all project issues
 * comments to issues
 * users involved
