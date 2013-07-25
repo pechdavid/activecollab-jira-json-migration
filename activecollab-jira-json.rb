@@ -27,7 +27,11 @@ def json_url(append)
 	uri = URI.parse(BASE_URL + append)
 	response = Net::HTTP.get_response(uri)
 	body = response.body
-	JSON.parse(body)
+	if body == "null" then
+		{}
+	else
+		JSON.parse(body)
+	end
 end
 
 
