@@ -5,9 +5,9 @@ require "uri"
 require "json"
 require "time"
 
-if (ARGV.size != 4)
-	$stderr.puts "Usage: ./active-collab-jira-json.rb AC_URL AC_USER_API_KEY AC_PROJECT_ID JIRA_PROJECT_ID > export.json"
-	$stderr.puts "Example: ./active-collab-jira-json.rb http://ac.mydomain.name 20-123213123123123 12 JIRAPROJ > export.json"
+if (ARGV.size != 5)
+	$stderr.puts "Usage: ./active-collab-jira-json.rb AC_URL AC_USER_API_KEY AC_PROJECT_ID JIRA_PROJECT_ID SKIP_PRIVATE > export.json"
+	$stderr.puts "Example: ./active-collab-jira-json.rb http://ac.mydomain.name 20-123213123123123 12 JIRAPROJ 0 > export.json"
 	$stderr.puts "And import it to Jira!"
 	exit(0)
 end
@@ -18,6 +18,7 @@ URL = ARGV[0]
 KEY = ARGV[1]
 PROJECT_ID = ARGV[2].to_i
 TARGET_PROJECT = ARGV[3]
+SKIP_PRIVATE = ARGV[4];
 BASE_URL = "%s/api.php\?token\=%s\&format\=json\&path_info\=" % [URL, KEY]
 
 $EMAILS = {}
@@ -83,13 +84,17 @@ def body(str)
 	end
 end
 
-def iterate_tickets(append)
+def iterate_tickets(append, skipPrivate)
 	raw_list = json_url("projects/" + PROJECT_ID.to_s + "/tickets" + append)
 
 	out_issues = []
 
 	raw_list.collect do |ticket_thumb|
 		raw = json_url("projects/" + PROJECT_ID.to_s + "/tickets/" + ticket_thumb["ticket_id"].to_s)
+				
+		if raw["visibility"] == 0 && skipPrivate == "1"
+			next
+		end
 
 		$stderr.puts "#" + ticket_thumb["ticket_id"].to_s + ": " + raw["name"]
 
@@ -175,12 +180,12 @@ def iterate_tickets(append)
 	end
 end
 
-def export_project()
+def export_project(skipPrivate)
 	{
 		"projects" =>
 			[
 				{
-					"issues" => iterate_tickets("").concat(iterate_tickets("/archive")),
+					"issues" => iterate_tickets("", skipPrivate).concat(iterate_tickets("/archive", skipPrivate)),
 					"key" => TARGET_PROJECT,
 					"versions" =>
 						$MILESTONES.reject {|key, value| value.nil? }.collect do |k, v|
@@ -202,4 +207,4 @@ def export_project()
 end
 
 
-puts export_project()
+puts export_project(SKIP_PRIVATE)
